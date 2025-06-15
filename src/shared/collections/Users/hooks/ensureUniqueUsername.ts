@@ -20,18 +20,24 @@ export const ensureUniqueUsername: FieldHook = async ({ originalDoc, req, value 
       },
     },
   ]
+  const firstUserExist = await req.payload.find({
+    collection: 'users',
+  })
+  console.log("firstUserExist:", firstUserExist)
+  let selectedTenant = null
+  if (firstUserExist.docs.length > 0) {
+    selectedTenant = getTenantFromCookie(
+      req.headers,
+      getCollectionIDType({ payload: req.payload, collectionSlug: 'tenants' }),
+    )
 
-  const selectedTenant = getTenantFromCookie(
-    req.headers,
-    getCollectionIDType({ payload: req.payload, collectionSlug: 'tenants' }),
-  )
-
-  if (selectedTenant) {
-    constraints.push({
-      'tenants.tenant': {
-        equals: selectedTenant,
-      },
-    })
+    if (selectedTenant) {
+      constraints.push({
+        'tenants.tenant': {
+          equals: selectedTenant,
+        },
+      })
+    }
   }
 
   const findDuplicateUsers = await req.payload.find({
@@ -45,21 +51,23 @@ export const ensureUniqueUsername: FieldHook = async ({ originalDoc, req, value 
     const tenantIDs = getUserTenantIDs(req.user)
     // if the user is an admin or has access to more than 1 tenant
     // provide a more specific error message
-    if (req.user.roles?.includes('super-admin') || tenantIDs.length > 1) {
-      const attemptedTenantChange = await req.payload.findByID({
-        // @ts-ignore - selectedTenant will match DB ID type
-        id: selectedTenant,
-        collection: 'tenants',
-      })
+    if (firstUserExist.docs.length > 0) {
+      if (req.user.roles?.includes('super-admin') || tenantIDs.length > 1) {
+        const attemptedTenantChange = await req.payload.findByID({
+          // @ts-ignore - selectedTenant will match DB ID type
+          id: selectedTenant,
+          collection: 'tenants',
+        })
 
-      throw new ValidationError({
-        errors: [
-          {
-            message: `The "${attemptedTenantChange.name}" tenant already has a user with the username "${value}". Usernames must be unique per tenant.`,
-            path: 'username',
-          },
-        ],
-      })
+        throw new ValidationError({
+          errors: [
+            {
+              message: `The "${attemptedTenantChange.name}" tenant already has a user with the username "${value}". Usernames must be unique per tenant.`,
+              path: 'username',
+            },
+          ],
+        })
+      }
     }
 
     throw new ValidationError({
