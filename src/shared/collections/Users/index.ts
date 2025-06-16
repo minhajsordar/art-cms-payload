@@ -90,13 +90,13 @@ const Users: CollectionConfig = {
 
   hooks: {
     afterLogin: [setCookieBasedOnDomain],
-    // beforeValidate: [
-    //   ({ data }) => {
-    //     console.log('Before creating User: ', data)
-    //     // ...
-    //     return data
-    //   },
-    // ],
+    beforeValidate: [
+      ({ data }) => {
+        console.log('Before creating User: ', data)
+        // ...
+        return data
+      },
+    ],
   },
 }
 

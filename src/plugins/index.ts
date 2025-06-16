@@ -116,7 +116,6 @@ export const plugins: Plugin[] = [
       forms: {
         useTenantAccess: true,
       },
-      users: {},
     },
     tenantField: {
       access: {
