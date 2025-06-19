@@ -1,6 +1,6 @@
 // storage-adapter-import-placeholder
-// import { postgresAdapter } from '@payloadcms/db-postgres'
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { postgresAdapter } from '@payloadcms/db-postgres'
+// import { mongooseAdapter } from '@payloadcms/db-mongodb'
 
 import sharp from 'sharp' // sharp-import
 import path from 'path'
@@ -64,14 +64,14 @@ export default buildConfig({
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
 
-  db: mongooseAdapter({
-    url: process.env.DATABASE_URI as string,
-  }),
-  // db: postgresAdapter({
-  //   pool: {
-  //     connectionString: process.env.DATABASE_URI as string,
-  //   },
+  // db: mongooseAdapter({
+  //   url: process.env.DATABASE_URI as string,
   // }),
+  db: postgresAdapter({
+    pool: {
+      connectionString: process.env.DATABASE_URI as string,
+    },
+  }),
   collections: [Pages, Posts, Media, Categories, Users, Tenants],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
