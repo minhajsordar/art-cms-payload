@@ -9,10 +9,10 @@ import { superAdminOrTenantAdminAccess } from '@/shared/collections/Pages/access
 import { anyone } from '@/utilities/auth/anyone'
 // import { authenticated } from '@/utilities/auth/authenticated'
 // Local Upload config
-// import path from 'path'
-// import { fileURLToPath } from 'url'
-// const filename = fileURLToPath(import.meta.url)
-// const dirname = path.dirname(filename)
+import path from 'path'
+import { fileURLToPath } from 'url'
+const filename = fileURLToPath(import.meta.url)
+const dirname = path.dirname(filename)
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -40,10 +40,10 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
-    // staticDir: path.resolve(dirname, '../../public/media'),
+    staticDir: path.resolve(dirname, '../../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
-    disableLocalStorage: true,
+    // disableLocalStorage: true,
     imageSizes: [
       {
         name: 'thumbnail',
@@ -75,6 +75,17 @@ export const Media: CollectionConfig = {
         width: 1200,
         height: 630,
         crop: 'center',
+      },
+    ],
+  },
+  hooks: {
+    beforeOperation: [
+      ({ operation, req, args }) => {
+        if ((operation === 'create' || operation === 'update') && req.file) {
+          // req.file.name = `test.jpg`
+          console.log("tenant",args?.data.tenant)
+          args.collection.config.upload.staticDir = `${args.collection.config.upload.staticDir}/${args?.data.tenant}`
+        }
       },
     ],
   },

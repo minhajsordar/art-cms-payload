@@ -133,21 +133,21 @@ export const plugins: Plugin[] = [
     },
     userHasAccessToAllTenants: (user) => isSuperAdmin(user),
   }),
-  s3Storage({
-    collections: {
-      media: {
-        prefix: 'media-prefix',
-      },
-    },
-    bucket: process.env.S3_BUCKET || '',
-    config: {
-      credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
-      },
-      endpoint: process.env.S3_ENDPOINT,
-      forcePathStyle: process.env.S3_FORCE_PATH_STYLE === 'true',
-      region: process.env.S3_REGION,
-    },
-  }),
+  // s3Storage({
+  //   collections: {
+  //     media: {
+  //       prefix: 'media-prefix',
+  //     },
+  //   },
+  //   bucket: process.env.S3_BUCKET || '',
+  //   config: {
+  //     credentials: {
+  //       accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+  //       secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+  //     },
+  //     endpoint: process.env.S3_ENDPOINT,
+  //     forcePathStyle: process.env.S3_FORCE_PATH_STYLE === 'true',
+  //     region: process.env.S3_REGION,
+  //   },
+  // }),
 ]
